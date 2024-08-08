@@ -12,6 +12,7 @@
 
 static std::map<std::string, std::string> K_ROS2_PIXELFORMAT_TO_PFNC(
     {{sensor_msgs::image_encodings::RGB8, GetPixelFormatName(PfncFormat::RGB8)},
+     {"Coord3D_ABCY16", GetPixelFormatName(PfncFormat::Coord3D_ABCY16)},  //Added 
      {sensor_msgs::image_encodings::RGBA8,
       GetPixelFormatName(PfncFormat::RGBa8)},
      {sensor_msgs::image_encodings::RGB16,
