@@ -22,11 +22,12 @@
   -->
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_srvs</depend>
   <depend>launch</depend>
-  <depend>launch_ros</depend>
-
-
+  <depend>launch_ros</depend> 
+  <depend>pcl_conversions</depend>
+  <depend>PCL</depend>
   <!--
     NEEDED AT BUILD TIME
       https://www.ros.org/reps/rep-0149.html#buildtool-depend-multiple
