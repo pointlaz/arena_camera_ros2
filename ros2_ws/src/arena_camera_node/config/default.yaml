@@ -1,0 +1,269 @@
+    # NOTE
+    # USED BY the package .launch files
+arena_camera_node:
+  ros__parameters:
+    #  The tf frame under which the images were published
+    camera_frame: arena_camera
+
+    #  The DeviceUserID of the camera. If empty, the first camera found in the
+    #  device list will be used
+    device_user_id: ""
+
+    #  The CameraInfo URL (Uniform Resource Locator) where the optional intrinsic
+    #  camera calibration parameters are stored. This URL string will be parsed
+    #  from the ROS-CameraInfoManager:
+    #  http://docs.ros.org/api/camera_info_manager/html/classcamera__info__manager_
+    #  1_1CameraInfoManager.html#details
+    camera_info_url: ""
+
+    #  The encoding of the pixels -- channel meaning, ordering, size
+    #  taken from the list of strings in include/sensor_msgs/image_encodings.h
+    #  The supported encodings are 'mono8', 'bgr8', 'rgb8', 'bayer_bggr8',
+    #  'bayer_gbrg8' and 'bayer_rggb8'
+    #  Default values are 'mono8' and 'rgb8'
+    #image_encoding: "Coord3D_ABCY16"
+    pixelformat: "Coord3D_ABCY16"
+    #  The desired publisher frame rate if listening to the topics.
+    #  This parameter can only be set once at startup
+    #  Calling the GrabImages-Action can result in a higher framerate
+    #   Min value: 0.1
+    #   Max value: 30.0
+    frame_rate: 10.0
+
+    # Added
+
+    # Here are the 3 different behaviors for the ToF image acquisition synchronisation and how to tune the parameters to reach them
+    # (the other parameters values do not matter for the image acquisition synchronisation):
+    #
+    #   - ToF image acquisition synchronised on a physical trigger sent at 10Hz:
+    #       frame_rate: 10.0
+    #       acquisition_mode: "Continuous"
+    #       trigger_selector: "FrameStart"
+    #       trigger_mode: "On"
+    #       trigger_source: "Line0"
+    #       trigger_activation: "RisingEdge"
+    #       trigger_delay: 0.0
+    #
+    #   - ToF image acquisition synchronised on a Software Trigger sent at 10Hz (standard node behavior):
+    #       frame_rate: 10.0
+    #       acquisition_mode: "Continuous"
+    #       trigger_selector: "FrameStart"
+    #       trigger_mode: "On"
+    #       trigger_source: "Software"
+    #       trigger_activation: "RisingEdge"
+    #       trigger_delay: 0.0
+    #
+    #   - ToF image acquisition synchronised on the camera internal timer at 10Hz:
+    #       frame_rate: 10.0
+    #       acquisition_mode: "Continuous"
+    #       trigger_mode: "Off"
+
+
+    # Specifies the acquisition mode of the current device. It helps determine the number of frames to acquire during each acquisition sequence. It uses an enumeration string format.
+    # Can only be:
+    #   "SingleFrame": Only a single frame is acquired.
+    #   "MultiFrame": Frames are acquired based on the specification of AcquisitionFrameCount parameter.
+    #   "Continuous": Frames are captured continuously until AcquisitionStop is called.
+    acquisition_mode: "Continuous"                  # (enum string) AcquisitionMode
+
+    # If true and if image_encoding == "coord3d_abcy16", the data will be converted to point cloud.
+    # The point cloud will be published to /arena_camera_node/point_cloud when a node subscribe to the topic.
+    publish_point_cloud: true                       # (bool)
+
+    # Controls if spatial filtering is applied.
+    scan_3d_spatial_filter_enable: true             # (bool) Scan3dSpatialFilterEnable
+
+    # Controls if the filter for removing flying pixels is applied.
+    scan_3d_flying_pixels_removal_enable: true      # (bool) Scan3dFlyingPixelsRemovalEnable
+
+    # Controls the distance threshold in the filter for removing flying pixels.
+    #   Min value: 0
+    #   Max value: 300
+    scan_3d_flying_pixels_distance_threshold: 15    # (int) Scan3dFlyingPixelsDistanceThreshold
+
+    # Selects the exposure time. It uses an enumeration string format.
+    # Can only be:
+    #   "Exp1000Us": Exposure time 1000 micro seconds.
+    #   "Exp250Us": Exposure time 250 micro seconds.
+    #   "Exp62_5Us": Exposure time 62.5 micro seconds.
+    exposure_time_selector: "Exp1000Us"             # (enum string) ExposureTimeSelector
+
+    # Selects the time of flight operating mode. It uses an enumeration string format.
+    # Can only be:
+    #   "Distance1250mmSingleFreq": Max working distance is 1.25 meters, using one modulation frequency.
+    #   "Distance3000mmSingleFreq": Max working distance is 3.0 meters, using one modulation frequency.
+    #   "Distance4000mmSingleFreq": Max working distance is 4.0 meters, using one modulation frequency.
+    #   "Distance5000mmMultiFreq": Max working distance is 5.0 meters, using two modulation frequencies.
+    #   "Distance6000mmSingleFreq": Max working distance is 6.0 meters, using one modulation frequency.
+    #   "Distance8300mmMultiFreq": Max working distance is 8.3 meters, using two modulation frequencies.
+    #   "HighSpeedDistance625mmSingleFreq": Max working distance is 0.625 meters, using one modulation frequency.
+    #   "HighSpeedDistance1250mmSingleFreq": Max working distance is 1.25 meters, using one modulation frequency.
+    #   "HighSpeedDistance2500mmSingleFreq": Max working distance is 2.5 meters, using one modulation frequency.
+    scan_3d_operating_mode: "Distance1250mmSingleFreq"      # (enum string) Scan3dOperatingMode
+
+    # Controls if the confidence threshold is enabled and applied to the output.
+    scan_3d_confidence_threshold_enable: true         # (bool) Scan3dConfidenceThresholdEnable
+
+    # Controls the minimum threshold value that determines whether or not the depth of a pixel is reliable.
+    #   Min value: 0
+    #   Max value: 65535
+    scan_3d_confidence_threshold_min: 1000            # (int) Scan3dConfidenceThresholdMin
+
+    # Specifies high dynamic range (HDR) mode. It uses an enumeration string format.
+    # Can only be:
+    #   "Off": None
+    #   "StandardHDR": None
+    #   "LowNoiseHDRX4": None
+    #   "LowNoiseHDRX8": None
+    #   "LowNoiseHDRX16": None
+    #   "LowNoiseHDRX32": None
+    scan_3d_hdr_mode: "StandardHDR"                   # (enum string) Scan3dHDRMode
+
+    # Selects which Scan 3D Mode is enabled.
+    # Can only be:
+    #   "Processed": Processed Scan 3D Mode.
+    #   "Raw": Raw Scan 3D Mode.
+    scan_3d_mode_selector: "Processed"                # (enum string) Scan3dModeSelector
+
+    # This node selects the specific trigger type to configure. It uses an enumeration string format.
+    # Can only be:
+    #   "AcquisitionStart": Trigger signal starts the Acquisition of one or many frames according to AcquisitionMode.
+    #   "FrameStart": Trigger signal starts the capture of one frame.
+    #   "FrameBurstStart": Trigger signal starts the capture of the bursts of frames in an acquisition.
+    #   "ExposureActive": Trigger signal pulse width determines the length of the ExposureTime.
+    #   "LineStart": Selects a trigger starting the capture of one Line of a Frame.
+    #   "FrameBurstActive": Trigger signal will capture burst of frames when source is high.
+    trigger_selector: "FrameStart"                    # (enum string) TriggerSelector
+
+    # Controls the On/Off status of the current trigger. It uses an enumeration string format.
+    # Can only be:
+    #   "Off": Disable current trigger.
+    #   "On": Enable current trigger.
+    trigger_mode: "Off"                                # (enum string) TriggerMode
+
+    # This node specifies the source of the trigger. It can be a software internal signal of a physical input hardware signal. It uses an enumeration string format.
+    # Can only be:
+    #   "Software": The trigger will be generated from the TriggerSoftware command.
+    #   "Line0": None
+    #   "Line1": None
+    #   "Line2": None
+    #   "Line3": None
+    #   "Action0": None
+    trigger_source: "Line0"                           # (enum string) TriggerSource
+
+    # This node specifies the state in which trigger is activated. It uses an enumeration string format.
+    # Can only be:
+    #   "RisingEdge": Trigger is activated on the rising edge of the signal.
+    trigger_activation: "RisingEdge"                  # (enum string) TriggerActivation
+
+    # Specifies the delay in microseconds (us) to apply after the trigger reception before activating it.
+    #   Min value: 0.0
+    #   Max value: 1.67772e+07
+    trigger_delay: 0.0                                # (float) TriggerDelay
+
+    # The node will display the info of every camera parameter containing get_camera_parameter_info in their names
+    # For example, if get_camera_parameter_info == "Exposure", the node will echo the info of every camera parameter containing "Exposure" in their names
+    # Set the parameter to "all" to get the info for all parameters
+    # Set the parameter to "none" or comment it and to not get any info
+    get_camera_parameter_info: "device_user_id"                 # (string)
+
+    # Controls the echo of the elapsed time to grab and publish an image.
+    echo_elapsed_time: false
+
+
+    # End Added
+
+    #  Binning factor to get downsampled images. It refers here to any camera
+    #  setting which combines rectangular neighborhoods of pixels into larger
+    #  "super-pixels." It reduces the resolution of the output image to
+    #  (width / binning_x) x (height / binning_y).
+    #  The default values binning_x = binning_y = 0 are considered the same
+    #  as binning_x = binning_y = 1 (no subsampling).
+    # binning_x: 1
+    # binning_y: 1
+
+    #  Mode of camera's shutter.
+    #  The supported modes are "rolling", "global" and "global_reset"
+    #  Default value is "" (empty) means default_shutter_mode
+    #shutter_mode: ""
+
+    ##########################################################################
+    ######################## Image Intensity Settings ########################
+    ##########################################################################
+    # The following settings do *NOT* have to be set. Each camera has default
+    # values which provide an automatic image adjustment resulting in valid
+    # images
+    ##########################################################################
+
+    #  The exposure time in microseconds to be set after opening the camera.
+    # exposure: 10000.0
+
+    #  The target gain in percent of the maximal value the camera supports
+    #  For USB-Cameras, the gain is in dB, for GigE-Cameras it is given in so
+    #  called 'device specific units'.
+    # gain: 0.5
+
+    #  Gamma correction of pixel intensity.
+    #  Adjusts the brightness of the pixel values output by the camera's sensor
+    #  to account for a non-linearity in the human perception of brightness or
+    #  of the display system (such as CRT).
+    # gamma: 1.0
+
+    #  The average intensity value of the images. It depends the exposure time
+    #  as well as the gain setting. If 'exposure' is provided, the interface will
+    #  try to reach the desired brightness by only varying the gain. (What may
+    #  often fail, because the range of possible exposure vaules is many
+    #  times higher than the gain range). If 'gain' is provided, the interface will
+    #  try to reach the desired brightness by only varying the exposure time. If
+    #  gain AND exposure are given, it is not possible to reach the brightness,
+    #  because both are assumed to be fix.
+    # brightness: 100
+
+    #  Only relevant, if 'brightness' is set:
+    #  The brightness_continuous flag controls the auto brightness function.
+    #  If it is set to false, the brightness will only be reached once.
+    #  Hence changing light conditions lead to changing brightness values.
+    #  If it is set to true, the given brightness will be reached continuously,
+    #  trying to adapt to changing light conditions. This is only possible for
+    #  values in the possible auto range of the arena API which is e.g. [50 - 205]
+    #  for acA2500-14um and acA1920-40gm
+    # brightness_continuous: true
+
+    #  Only relevant, if 'brightness' is set:
+    #  If the camera should try to reach and / or keep the brightness, hence
+    #  adapting to changing light conditions, at least one of the following flags
+    #  must be set.
+    #  If both are set, the interface will use the profile that tries to keep the
+    #  gain at minimum to reduce white noise.
+    #  The exposure_auto flag indicates, that the desired brightness will be
+    #  reached by adapting the exposure time.
+    #  The gain_auto flag indicates, that the desired brightness will be
+    #  reached by adapting the gain.
+    # exposure_auto: true
+    # gain_auto: true
+    ##########################################################################
+
+    #  The timeout while searching the exposure which is connected to the
+    #  desired brightness. For slow system this has to be increased.
+    # exposure_search_timeout: 5.0
+
+    #  The exposure search can be limited with an upper bound. This is to prevent
+    #  very high exposure times and resulting timeouts.
+    #  A typical value for this upper bound is ~2000000us.
+    # auto_exposure_upper_limit: 2000000.0
+
+    #  The MTU size. Only used for GigE cameras.
+    #  To prevent lost frames configure the camera has to be configured
+    #  with the MTU size the network card supports. A value greater 3000
+    #  should be good (1500 for RaspberryPI)
+    # gige:
+    #  mtu_size: 3000
+
+    #  Only used for GigE cameras.
+    #  The inter-package delay in ticks to prevent lost frames.
+    #  For most of GigE-Cameras, a value of 1000 is reasonable.
+    #  For cameras used on a RaspberryPI this value should be set to 11772.
+    # gige:
+    #  inter_pkg_delay: 1000
+
+

@@ -41,8 +41,7 @@ def generate_launch_description():
             package='arena_camera_node',
             executable='start',
             name=LaunchConfiguration('node_name'),
-           # parameters=[LaunchConfiguration('config_file')],
-           parameters=[{"pixelformat":"Coord3D_ABCY16"}], 
+            parameters=[LaunchConfiguration('config_file')],
             output='screen'
         ),
     ])

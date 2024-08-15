@@ -51,6 +51,10 @@ void ArenaCameraNode::parse_parameters_()
     nextParameterToDeclare = "topic";
     topic_ = this->declare_parameter(
         "topic", std::string("/") + this->get_name() + "/images");
+
+    // Added 
+    topic_point_cloud_ = this->declare_parameter(
+        "topic_point_cloud", std::string("/") + this->get_name() + "/point_cloud");
     // no need to is_passed_topic_
 
     nextParameterToDeclare = "qos_history";
@@ -65,101 +69,6 @@ void ArenaCameraNode::parse_parameters_()
     pub_qos_reliability_ = this->declare_parameter("qos_reliability", "");
     is_passed_pub_qos_reliability_ = pub_qos_reliability_ != "";
 
-
-    // Added 
-    nextParameterToDeclare = "acquisition_mode";
-    acquisition_mode_ = this->declare_parameter("acquisition_mode", "Continuous");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "acquisition_mode will be: " << acquisition_mode_);
-
-    // Get publish_point_cloud
-    nextParameterToDeclare = "publish_point_cloud";
-    publish_point_cloud_ = this->declare_parameter("publish_point_cloud", false);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "publish_point_cloud will be: " << publish_point_cloud_);
-
-    // Get scan_3d_spatial_filter_enable_
-    nextParameterToDeclare = "scan_3d_spatial_filter_enable";
-    scan_3d_spatial_filter_enable_ = this->declare_parameter("scan_3d_spatial_filter_enable", false);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dSpatialFilterEnable will be: " << scan_3d_spatial_filter_enable_);
-
-    // Get scan_3d_flying_pixels_removal_enable_
-    nextParameterToDeclare = "scan_3d_flying_pixels_removal_enable";
-    scan_3d_flying_pixels_removal_enable_ = this->declare_parameter("scan_3d_flying_pixels_removal_enable", false);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dFlyingPixelsRemovalEnable will be: " << scan_3d_flying_pixels_removal_enable_);
-
-    // Get scan_3d_flying_pixels_distance_threshold_
-    nextParameterToDeclare = "scan_3d_flying_pixels_distance_threshold";
-    scan_3d_flying_pixels_distance_threshold_ = this->declare_parameter("scan_3d_flying_pixels_distance_threshold", 0);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dFlyingPixelsDistanceThreshold will be: " << scan_3d_flying_pixels_distance_threshold_);
-
-    // Get exposure_time_selector_
-    nextParameterToDeclare = "exposure_time_selector";
-    exposure_time_selector_ = this->declare_parameter("exposure_time_selector", "Exp1000Us");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "ExposureTimeSelector will be: " << exposure_time_selector_);
-
-    // Get scan_3d_operating_mode_
-    nextParameterToDeclare = "scan_3d_operating_mode";
-    scan_3d_operating_mode_ = this->declare_parameter("scan_3d_operating_mode", "Distance1250mmSingleFreq");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dOperatingMode will be: " << scan_3d_operating_mode_);
-
-    // Get scan_3d_confidence_threshold_enable_
-    nextParameterToDeclare = "scan_3d_confidence_threshold_enable";
-    scan_3d_confidence_threshold_enable_ = this->declare_parameter("scan_3d_confidence_threshold_enable", false);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dConfidenceThresholdEnable will be: " << scan_3d_confidence_threshold_enable_);
-
-    // Get scan_3d_confidence_threshold_min_
-    nextParameterToDeclare = "scan_3d_confidence_threshold_min";
-    scan_3d_confidence_threshold_min_ = this->declare_parameter("scan_3d_confidence_threshold_min", 0);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dConfidenceThresholdEnable will be: " << scan_3d_confidence_threshold_min_);
-
-    // Get scan_3d_hdr_mode_
-    nextParameterToDeclare = "scan_3d_hdr_mode";
-    scan_3d_hdr_mode_ = this->declare_parameter("scan_3d_hdr_mode", "Off");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3HDRMode will be: " << scan_3d_hdr_mode_);
-
-    // Get scan_3d_mode_selector_
-    nextParameterToDeclare = "scan_3d_mode_selector";
-    scan_3d_mode_selector_ = this->declare_parameter("scan_3d_mode_selector", "Processed");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dModeSelector will be: " << scan_3d_mode_selector_);
-
-    // Get trigger_selector_
-    nextParameterToDeclare = "trigger_selector";
-    trigger_selector_ = this->declare_parameter("trigger_selector", "FrameStart");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerSelector will be: " << trigger_selector_);
-
-    // Get trigger_mode_
-    nextParameterToDeclare = "trigger_mode";
-    trigger_mode_ = this->declare_parameter("trigger_mode", "Off");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerMode will be: " << trigger_mode_);
-
-    // Get trigger_source_
-    nextParameterToDeclare = "trigger_source";
-    trigger_source_ = this->declare_parameter("trigger_source", "Software");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerSource will be: " << trigger_source_);
-
-    // Get trigger_activation_
-    nextParameterToDeclare = "trigger_activation";
-    trigger_activation_ = this->declare_parameter("trigger_activation", "RisingEdge");
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerActivation will be: " << trigger_activation_);
-
-    // Get trigger_delay_
-    nextParameterToDeclare = "trigger_delay";
-    trigger_delay_ = this->declare_parameter("trigger_delay", 0.0);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerDelay will be: " << trigger_delay_);
-
-    // Get get_camera_parameter_info_
-    nextParameterToDeclare = "get_camera_parameter_info";
-    get_camera_parameter_info_ = this->declare_parameter("get_camera_parameter_info", "all");
-    if (get_camera_parameter_info_ == "none")
-        RCLCPP_DEBUG_STREAM(this->get_logger(), "No parameters will have their info displayed");
-    else if (get_camera_parameter_info_ == "all")
-        RCLCPP_DEBUG_STREAM(this->get_logger(), "All parameters will have their info displayed");
-    else
-        RCLCPP_DEBUG_STREAM(this->get_logger(), "Parameters whose names contain '" << get_camera_parameter_info_ << "' will have their info displayed");
-
-    // Get echo_elapsed_time
-    nextParameterToDeclare = "echo_elapsed_time";
-    echo_elapsed_time_ = this->declare_parameter("echo_elapsed_time", false);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "echo_elapsed_time will be: " << echo_elapsed_time_);
   } catch (rclcpp::ParameterTypeException& e) {
     log_err(nextParameterToDeclare + " argument");
     throw;
@@ -311,40 +220,147 @@ void ArenaCameraNode::wait_for_device_timer_callback_()
   }
 }
 
+
+void ArenaCameraNode::parameters_declarations(){
+
+  // Added 
+    acquisition_mode_ = this->declare_parameter("acquisition_mode", "Continuous");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "acquisition_mode will be: " << acquisition_mode_);
+
+    // Get publish_point_cloud
+    publish_point_cloud_ = this->declare_parameter("publish_point_cloud", true);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "publish_point_cloud will be: " << publish_point_cloud_);
+
+    // Get scan_3d_spatial_filter_enable_
+    scan_3d_spatial_filter_enable_ = this->declare_parameter("scan_3d_spatial_filter_enable", false);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dSpatialFilterEnable will be: " << scan_3d_spatial_filter_enable_);
+
+    // Get scan_3d_flying_pixels_removal_enable_m
+    scan_3d_flying_pixels_removal_enable_ = this->declare_parameter("scan_3d_flying_pixels_removal_enable", false);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dFlyingPixelsRemovalEnable will be: " << scan_3d_flying_pixels_removal_enable_);
+
+    // Get scan_3d_flying_pixels_distance_threshold_
+    //nextParameterToDeclare = "scan_3d_flying_pixels_distance_threshold";
+    //scan_3d_flying_pixels_distance_threshold_ = this->declare_parameter("scan_3d_flying_pixels_distance_threshold", 0);
+    //RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dFlyingPixelsDistanceThreshold will be: " << scan_3d_flying_pixels_distance_threshold_);
+
+    // Get exposure_time_selector_
+    exposure_time_selector_ = this->declare_parameter("exposure_time_selector", "Exp1000Us");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "ExposureTimeSelector will be: " << exposure_time_selector_);
+
+    //Device user id
+    device_user_id_ = this->declare_parameter("device_user_id", "");
+    //device_user_id_ = "camera_ToF_1";
+    // Get scan_3d_operating_mode_
+    scan_3d_operating_mode_ = this->declare_parameter("scan_3d_operating_mode", "Distance1250mmSingleFreq");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dOperatingMode will be: " << scan_3d_operating_mode_);
+
+    // Get scan_3d_confidence_threshold_enable_
+    scan_3d_confidence_threshold_enable_ = this->declare_parameter("scan_3d_confidence_threshold_enable", false);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dConfidenceThresholdEnable will be: " << scan_3d_confidence_threshold_enable_);
+
+    // Get scan_3d_confidence_threshold_min_
+    scan_3d_confidence_threshold_min_ = this->declare_parameter("scan_3d_confidence_threshold_min", 0);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dConfidenceThresholdEnable will be: " << scan_3d_confidence_threshold_min_);
+
+    // Get scan_3d_hdr_mode_
+    scan_3d_hdr_mode_ = this->declare_parameter("scan_3d_hdr_mode", "Off");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3HDRMode will be: " << scan_3d_hdr_mode_);
+
+    // Get scan_3d_mode_selector_
+    scan_3d_mode_selector_ = this->declare_parameter("scan_3d_mode_selector", "Processed");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "Scan3dModeSelector will be: " << scan_3d_mode_selector_);
+
+    // Get trigger_selector_
+    trigger_selector_ = this->declare_parameter("trigger_selector", "FrameStart");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerSelector will be: " << trigger_selector_);
+
+    // Get trigger_mode_
+    trigger_mode_ = this->declare_parameter("trigger_mode", "Off");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerMode will be: " << trigger_mode_);
+
+    // Get trigger_source_
+    trigger_source_ = this->declare_parameter("trigger_source", "Software");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerSource will be: " << trigger_source_);
+
+    // Get trigger_activation_
+    trigger_activation_ = this->declare_parameter("trigger_activation", "RisingEdge");
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerActivation will be: " << trigger_activation_);
+
+    // Get trigger_delay_
+    trigger_delay_ = this->declare_parameter("trigger_delay", 0.0);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "TriggerDelay will be: " << trigger_delay_);
+
+    // Get frame_rate_
+    frame_rate_ = this->declare_parameter("frame_rate", 10.0);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "frame_rate will be: " << frame_rate_);
+
+
+    // Get get_camera_parameter_info_
+    get_camera_parameter_info_ = this->declare_parameter("get_camera_parameter_info", "none");
+    if (get_camera_parameter_info_ == "none")
+        RCLCPP_DEBUG_STREAM(this->get_logger(), "No parameters will have their info displayed");
+    else if (get_camera_parameter_info_ == "all")
+        RCLCPP_DEBUG_STREAM(this->get_logger(), "All parameters will have their info displayed");
+    else
+        RCLCPP_DEBUG_STREAM(this->get_logger(), "Parameters whose names contain '" << get_camera_parameter_info_ << "' will have their info displayed");
+
+    // Get echo_elapsed_time
+    echo_elapsed_time_ = this->declare_parameter("echo_elapsed_time", false);
+    RCLCPP_DEBUG_STREAM(this->get_logger(), "echo_elapsed_time will be: " << echo_elapsed_time_);
+
+}
 void ArenaCameraNode::run_()
 {
+  parameters_declarations(); 
   auto device = create_device_ros_();
   m_pDevice.reset(device);
   set_nodes_();
 
-//   //Added
-//   GenApi::node_vector nodeList;
-//   m_pDevice->GetNodeMap()->GetNodes(nodeList);
-//   if(get_camera_parameter_info_ != "none")
-//   {
-//     RCLCPP_INFO(this->get_logger(), "#################### PARAMETERS INFO ####################");
-//     RCLCPP_INFO(this->get_logger(), "get_camera_parameter_info_: %s", get_camera_parameter_info_.c_str());
-//     RCLCPP_INFO(this->get_logger(), "---------------------------------------------------------");
-//     for(size_t i = 0 ; i < nodeList.size() ; i++)
-//     {
-//       if(get_camera_parameter_info_ == "all" || nodeList[i]->GetName().find(get_camera_parameter_info_.c_str()) != std::string::npos)
-//       {
-//         RCLCPP_INFO(this->get_logger(), "Node %zu: %s", i, nodeList[i]->GetName().c_str());
-//         RCLCPP_INFO(this->get_logger(), "\t - Description: %s", nodeList[i]->GetDescription().c_str());
-//         RCLCPP_INFO(this->get_logger(), "\t - Interface: %s", GetInterfaceName(nodeList[i]).c_str());
-//         RCLCPP_INFO(this->get_logger(), "\t - IsAvailable = %d", IsAvailable(nodeList[i]));
-//         RCLCPP_INFO(this->get_logger(), "\t - IsReadable = %d", IsReadable(nodeList[i]));
-//         RCLCPP_INFO(this->get_logger(), "\t - IsWritable = %d", IsWritable(nodeList[i]));
-//         RCLCPP_INFO(this->get_logger(), "---------------------------------------------------------");
-//       }
-//     }
-//   }
-// // End added
+   //Added
+   // Code get from ArenaSDK_Linux_x64/Examples/Arena/Cpp_Helios_MinMaxD epth/Cpp_Helios_MinMaxDepth.cpp
+      // Code to get the scales and offsets for x, y and z
+  auto nodemap = m_pDevice->GetNodeMap();
+  Arena::SetNodeValue<GenICam::gcstring>(nodemap, "Scan3dCoordinateSelector", "CoordinateA");
+  scale_x = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateScale"));
+  offset_x = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateOffset"));
+  Arena::SetNodeValue<GenICam::gcstring>(nodemap, "Scan3dCoordinateSelector", "CoordinateB");
+  scale_y = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateScale"));
+  offset_y = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateOffset"));
+  Arena::SetNodeValue<GenICam::gcstring>(nodemap, "Scan3dCoordinateSelector", "CoordinateC");
+  scale_z = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateScale"));
 
-RCLCPP_INFO(this->get_logger(), "#################### SET PARAMETERS ####################");
+  RCLCPP_INFO_STREAM(this->get_logger(), "#################### SCALES INFO ####################");
+  RCLCPP_INFO_STREAM(this->get_logger(), "scale_x = " << scale_x << " ; offset_x = " << offset_x);
+  RCLCPP_INFO_STREAM(this->get_logger(), "scale_y = " << scale_y << " ; offset_y = " << offset_y);
+  RCLCPP_INFO_STREAM(this->get_logger(), "scale_z = " << scale_z);
+
+   GenApi::node_vector nodeList;
+   nodemap->GetNodes(nodeList);
+   if(get_camera_parameter_info_ != "none")
+   {
+     RCLCPP_INFO(this->get_logger(), "#################### PARAMETERS INFO ####################");
+     RCLCPP_INFO(this->get_logger(), "get_camera_parameter_info_: %s", get_camera_parameter_info_.c_str());
+     RCLCPP_INFO(this->get_logger(), "---------------------------------------------------------");
+     for(size_t i = 0 ; i < nodeList.size() ; i++)
+     {
+       if(get_camera_parameter_info_ == "all" || nodeList[i]->GetName().find(get_camera_parameter_info_.c_str()) != std::string::npos)
+       {
+         RCLCPP_INFO(this->get_logger(), "Node %zu: %s", i, nodeList[i]->GetName().c_str());
+         RCLCPP_INFO(this->get_logger(), "\t - Description: %s", nodeList[i]->GetDescription().c_str());
+         RCLCPP_INFO(this->get_logger(), "\t - Interface: %s", GetInterfaceName(nodeList[i]).c_str());
+         RCLCPP_INFO(this->get_logger(), "\t - IsAvailable = %d", IsAvailable(nodeList[i]));
+         RCLCPP_INFO(this->get_logger(), "\t - IsReadable = %d", IsReadable(nodeList[i]));
+         RCLCPP_INFO(this->get_logger(), "\t - IsWritable = %d", IsWritable(nodeList[i]));
+         RCLCPP_INFO(this->get_logger(), "---------------------------------------------------------");
+       }
+     }
+   }
+ // End added
+
+  RCLCPP_INFO(this->get_logger(), "#################### SET PARAMETERS ####################");
   m_pDevice->StartStream();
-
-  if (!trigger_mode_activated_) {
+  if (trigger_mode_=="Off") {
     publish_images_();
   } else {
     // else ros::spin will
@@ -359,32 +375,17 @@ void ArenaCameraNode::publish_images_()
       auto p_image_msg = std::make_unique<sensor_msgs::msg::Image>();
       pImage = m_pDevice->GetImage(1000);
       msg_form_image_(pImage, *p_image_msg);
-
       // Added 
-      auto nodemap = m_pDevice->GetNodeMap();
-      point_cloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("point_cloud", 10);
-      // Code get from ArenaSDK_Linux_x64/Examples/Arena/Cpp_Helios_MinMaxD epth/Cpp_Helios_MinMaxDepth.cpp
-      // Code to get the scales and offsets for x, y and z
-      Arena::SetNodeValue<GenICam::gcstring>(nodemap, "Scan3dCoordinateSelector", "CoordinateA");
-      scale_x = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateScale"));
-      offset_x = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateOffset"));
-      Arena::SetNodeValue<GenICam::gcstring>(nodemap, "Scan3dCoordinateSelector", "CoordinateB");
-      scale_y = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateScale"));
-      offset_y = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateOffset"));
-      Arena::SetNodeValue<GenICam::gcstring>(nodemap, "Scan3dCoordinateSelector", "CoordinateC");
-      scale_z = static_cast<float>(Arena::GetNodeValue<double>(nodemap, "Scan3dCoordinateScale"));
-
-      RCLCPP_INFO_STREAM(this->get_logger(), "#################### SCALES INFO ####################");
-      RCLCPP_INFO_STREAM(this->get_logger(), "scale_x = " << scale_x << " ; offset_x = " << offset_x);
-      RCLCPP_INFO_STREAM(this->get_logger(), "scale_y = " << scale_y << " ; offset_y = " << offset_y);
-      RCLCPP_INFO_STREAM(this->get_logger(), "scale_z = " << scale_z);
+      
+      point_cloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(topic_point_cloud_, 10);
+      
 
       // End Added
-      m_pub_->publish(std::move(p_image_msg));
+      
 
 
-      // Added 
-    if (point_cloud_pub_->get_subscription_count() > 0 && p_image_msg->encoding == "16UC4" && publish_point_cloud_)
+      // Added
+    if (point_cloud_pub_->get_subscription_count() > 0 && p_image_msg->encoding == "Coord3D_ABCY16" && publish_point_cloud_)
     {
         pcl::PointCloud<pcl::PointXYZI> point_cloud;
         point_cloud.height = p_image_msg->height;
@@ -392,7 +393,6 @@ void ArenaCameraNode::publish_images_()
         point_cloud.is_dense = true;
         point_cloud.points.resize(point_cloud.height * point_cloud.width);
         int size_img = point_cloud.points.size();
-        
         int data;
         for(int i = 0; i < size_img; i++)
         {
@@ -420,7 +420,7 @@ void ArenaCameraNode::publish_images_()
         point_cloud_pub_->publish(point_cloud_msg);
     }
 
-
+    m_pub_->publish(std::move(p_image_msg));
 
       // End added 
       log_info(std::string("image ") + std::to_string(pImage->GetFrameId()) +
@@ -502,7 +502,7 @@ void ArenaCameraNode::publish_an_image_on_trigger_(
     std::shared_ptr<std_srvs::srv::Trigger::Request> request /*unused*/,
     std::shared_ptr<std_srvs::srv::Trigger::Response> response)
 {
-  if (!trigger_mode_activated_) {
+  if (trigger_mode_=="Off") {
     std::string msg =
         "Failed to trigger image because the device is not in trigger mode."
         "run `ros2 run arena_camera_node run --ros-args -p trigger_mode:=true`";
@@ -594,6 +594,39 @@ Arena::IDevice* ArenaCameraNode::create_device_ros_()
     index = DeviceInfoHelper::get_index_of_serial(device_infos, serial_);
   }
 
+  // Added 
+  if (!device_user_id_.empty())
+  {
+    std::vector<Arena::DeviceInfo>::iterator it;
+    bool found_desired_device = false;
+    for (it = device_infos.begin(); it != device_infos.end(); ++it)
+      {
+        std::string device_user_id_found(it->UserDefinedName());
+        if ((0 == device_user_id_.compare(device_user_id_found)) ||
+            (device_user_id_.length() < device_user_id_found.length() &&
+             (0 ==
+              device_user_id_found.compare(device_user_id_found.length() - device_user_id_.length(),
+                                           device_user_id_.length(), device_user_id_))))
+        {
+          found_desired_device = true;
+          break;
+        }
+      }
+      if (found_desired_device)
+      {
+        RCLCPP_INFO_STREAM(this->get_logger(), "Found the desired camera with DeviceUserID " << device_user_id_ << ": ");
+
+        auto pDevice_ = m_pSystem->CreateDevice(*it);
+        return pDevice_;
+      }
+      else
+      {
+        RCLCPP_ERROR_STREAM(this->get_logger(),"Couldn't find the camera that matches the "
+                         << "given DeviceUserID: " << device_user_id_<< "! "
+                         << "Either the ID is wrong or the cam is not yet connected");
+      }
+  }
+  
   auto pDevice = m_pSystem->CreateDevice(device_infos.at(index));
   log_info(std::string("device created ") +
            DeviceInfoHelper::info(device_infos.at(index)));
@@ -609,7 +642,7 @@ void ArenaCameraNode::set_nodes_()
   set_nodes_exposure_();
   set_nodes_trigger_mode_();
   // Added
-
+  
   // AcquisitionFrameRateEnable
   bool target_acquisition_frame_rate_enable, reached_acquisition_frame_rate_enable;
   if (trigger_mode_ == "On")
@@ -621,14 +654,14 @@ void ArenaCameraNode::set_nodes_()
     RCLCPP_INFO(this->get_logger(), "AcquisitionFrameRateEnable set to: %s", reached_acquisition_frame_rate_enable ? "true" : "false");
   else
     RCLCPP_ERROR(this->get_logger(), "Error while setting AcquisitionFrameRateEnable. Current AcquisitionFrameRateEnable value is: %s", reached_acquisition_frame_rate_enable ? "true" : "false");
-
+  
   // AcquisitionFrameRate
   float reached_acquisition_frame_rate;
   if (setAcquisitionFrameRate(frame_rate_, reached_acquisition_frame_rate))
     RCLCPP_INFO(this->get_logger(), "AcquisitionFrameRate set to: %f", reached_acquisition_frame_rate);
   else
     RCLCPP_ERROR(this->get_logger(), "Error while setting AcquisitionFrameRate. Current AcquisitionFrameRate value is: %f", reached_acquisition_frame_rate);
-
+  /*
   // AcquisitionMode
   std::string reached_acquisition_mode;
   if (setAcquisitionMode(acquisition_mode_, reached_acquisition_mode))
@@ -651,11 +684,11 @@ void ArenaCameraNode::set_nodes_()
     RCLCPP_ERROR(this->get_logger(), "Error while setting Scan3dFlyingPixelsRemovalEnable. Current Scan3dFlyingPixelsRemovalEnable value is: %s", reached_scan_3d_flying_pixels_removal_enable ? "true" : "false");
 
   // Scan3dFlyingPixelsDistanceThreshold
-  int reached_scan_3d_flying_pixels_distance_threshold;
-  if (setScan3dFlyingPixelsDistanceThreshold(scan_3d_flying_pixels_distance_threshold_, reached_scan_3d_flying_pixels_distance_threshold))
-    RCLCPP_INFO(this->get_logger(), "Scan3dFlyingPixelsDistanceThreshold set to: %d", reached_scan_3d_flying_pixels_distance_threshold);
-  else
-    RCLCPP_ERROR(this->get_logger(), "Error while setting Scan3dFlyingPixelsDistanceThreshold. Current Scan3dFlyingPixelsDistanceThreshold value is: %d", reached_scan_3d_flying_pixels_distance_threshold);
+  //int reached_scan_3d_flying_pixels_distance_threshold;
+  //if (setScan3dFlyingPixelsDistanceThreshold(scan_3d_flying_pixels_distance_threshold_, reached_scan_3d_flying_pixels_distance_threshold))
+  //  RCLCPP_INFO(this->get_logger(), "Scan3dFlyingPixelsDistanceThreshold set to: %d", reached_scan_3d_flying_pixels_distance_threshold);
+  //else
+  //  RCLCPP_ERROR(this->get_logger(), "Error while setting Scan3dFlyingPixelsDistanceThreshold. Current Scan3dFlyingPixelsDistanceThreshold value is: %d", reached_scan_3d_flying_pixels_distance_threshold);
 
   // ExposureTimeSelector
   std::string reached_exposure_time_selector;
@@ -686,11 +719,11 @@ void ArenaCameraNode::set_nodes_()
     RCLCPP_ERROR(this->get_logger(), "Error while setting Scan3dConfidenceThresholdMin. Current Scan3dConfidenceThresholdMin value is: %d", reached_scan_3d_confidence_threshold_min);
 
   // Scan3dHDRMode
-  std::string reached_scan_3d_hdr_mode;
-  if (setScan3dHDRMode(scan_3d_hdr_mode_, reached_scan_3d_hdr_mode))
-    RCLCPP_INFO(this->get_logger(), "Scan3dHDRMode set to: %s", reached_scan_3d_hdr_mode.c_str());
-  else
-    RCLCPP_ERROR(this->get_logger(), "Error while setting Scan3dHDRMode. Current Scan3dHDRMode value is: %s", reached_scan_3d_hdr_mode.c_str());
+  //std::string reached_scan_3d_hdr_mode;
+  //if (setScan3dHDRMode(scan_3d_hdr_mode_, reached_scan_3d_hdr_mode))
+  //  RCLCPP_INFO(this->get_logger(), "Scan3dHDRMode set to: %s", reached_scan_3d_hdr_mode.c_str());
+  //else
+  //  RCLCPP_ERROR(this->get_logger(), "Error while setting Scan3dHDRMode. Current Scan3dHDRMode value is: %s", reached_scan_3d_hdr_mode.c_str());
 
   // Scan3dModeSelector
   std::string reached_scan_3d_mode_selector;
@@ -735,7 +768,7 @@ void ArenaCameraNode::set_nodes_()
     RCLCPP_ERROR(this->get_logger(), "Error while setting TriggerDelay. Current TriggerDelay value is: %f", reached_trigger_delay);
 
   // End Added
-
+*/
     
 
 
@@ -844,7 +877,7 @@ void ArenaCameraNode::set_nodes_exposure_()
 void ArenaCameraNode::set_nodes_trigger_mode_()
 {
   auto nodemap = m_pDevice->GetNodeMap();
-  if (trigger_mode_activated_) {
+  if (trigger_mode_=="On") {
     if (exposure_time_ < 0) {
       log_warn(
           "\tavoid long waits wating for triggered images by providing proper "
@@ -1170,7 +1203,7 @@ bool ArenaCameraNode::setScan3dFlyingPixelsRemovalEnable(const bool& target_scan
   }
   return true;
 }
-
+/*
 bool ArenaCameraNode::setScan3dFlyingPixelsDistanceThresholdValue(const int& target_scan_3d_flying_pixels_distance_threshold, int& reached_scan_3d_flying_pixels_distance_threshold)
 {
   try
@@ -1235,7 +1268,7 @@ bool ArenaCameraNode::setScan3dFlyingPixelsDistanceThreshold(const int& target_s
   }
   return true;
 }
-
+*/
 bool ArenaCameraNode::setExposureTimeSelectorValue(const std::string& target_exposure_time_selector, std::string& reached_exposure_time_selector)
 {
   try
@@ -1477,43 +1510,43 @@ bool ArenaCameraNode::setScan3dConfidenceThresholdMin(const int& target_scan_3d_
   }
   return true;
 }
-
-bool ArenaCameraNode::setScan3dHDRModeValue(const std::string& target_scan_3d_hdr_mode, std::string& reached_scan_3d_hdr_mode)
-{
-  try
+/*
+  bool ArenaCameraNode::setScan3dHDRModeValue(const std::string& target_scan_3d_hdr_mode, std::string& reached_scan_3d_hdr_mode)
   {
-    GenApi::CEnumerationPtr pScan3dHDRMode = m_pDevice->GetNodeMap()->GetNode("Scan3dHDRMode");
-    if (GenApi::IsWritable(pScan3dHDRMode))
+    try
     {
-      if(target_scan_3d_hdr_mode == "Off" || target_scan_3d_hdr_mode == "StandardHDR" ||
-         target_scan_3d_hdr_mode == "LowNoiseHDRX4" || target_scan_3d_hdr_mode == "LowNoiseHDRX8" ||
-         target_scan_3d_hdr_mode == "LowNoiseHDRX16" || target_scan_3d_hdr_mode == "LowNoiseHDRX32")
+      GenApi::CEnumerationPtr pScan3dHDRMode = m_pDevice->GetNodeMap()->GetNode("Scan3dHDRMode");
+      if (GenApi::IsWritable(pScan3dHDRMode))
       {
-        GenICam::gcstring scan_3d_hdr_mode_to_set = target_scan_3d_hdr_mode.c_str();
-        Arena::SetNodeValue<GenICam::gcstring>(m_pDevice->GetNodeMap(), "Scan3dHDRMode", scan_3d_hdr_mode_to_set);
-        reached_scan_3d_hdr_mode = Arena::GetNodeValue<GenICam::gcstring>(m_pDevice->GetNodeMap(), "Scan3dHDRMode").c_str();
+        if(target_scan_3d_hdr_mode == "Off" || target_scan_3d_hdr_mode == "StandardHDR" ||
+          target_scan_3d_hdr_mode == "LowNoiseHDRX4" || target_scan_3d_hdr_mode == "LowNoiseHDRX8" ||
+          target_scan_3d_hdr_mode == "LowNoiseHDRX16" || target_scan_3d_hdr_mode == "LowNoiseHDRX32")
+        {
+          GenICam::gcstring scan_3d_hdr_mode_to_set = target_scan_3d_hdr_mode.c_str();
+          Arena::SetNodeValue<GenICam::gcstring>(m_pDevice->GetNodeMap(), "Scan3dHDRMode", scan_3d_hdr_mode_to_set);
+          reached_scan_3d_hdr_mode = Arena::GetNodeValue<GenICam::gcstring>(m_pDevice->GetNodeMap(), "Scan3dHDRMode").c_str();
+        }
+        else
+        {
+          RCLCPP_WARN(this->get_logger(), "Camera does not support the value '%s' for Scan3dHDRMode. Will keep the current settings",
+                      target_scan_3d_hdr_mode.c_str());
+          reached_scan_3d_hdr_mode = Arena::GetNodeValue<GenICam::gcstring>(m_pDevice->GetNodeMap(), "Scan3dHDRMode").c_str();
+        }
       }
       else
       {
-        RCLCPP_WARN(this->get_logger(), "Camera does not support the value '%s' for Scan3dHDRMode. Will keep the current settings",
-                    target_scan_3d_hdr_mode.c_str());
+        RCLCPP_WARN(this->get_logger(), "Camera does not support Scan3dHDRMode. Will keep the current settings");
         reached_scan_3d_hdr_mode = Arena::GetNodeValue<GenICam::gcstring>(m_pDevice->GetNodeMap(), "Scan3dHDRMode").c_str();
       }
     }
-    else
+    catch (const GenICam::GenericException& e)
     {
-      RCLCPP_WARN(this->get_logger(), "Camera does not support Scan3dHDRMode. Will keep the current settings");
-      reached_scan_3d_hdr_mode = Arena::GetNodeValue<GenICam::gcstring>(m_pDevice->GetNodeMap(), "Scan3dHDRMode").c_str();
+      RCLCPP_ERROR(this->get_logger(), "An exception while setting target Scan3dHDRMode to %s occurred: %s",
+                  target_scan_3d_hdr_mode.c_str(), e.GetDescription());
+      return false;
     }
+    return true;
   }
-  catch (const GenICam::GenericException& e)
-  {
-    RCLCPP_ERROR(this->get_logger(), "An exception while setting target Scan3dHDRMode to %s occurred: %s",
-                 target_scan_3d_hdr_mode.c_str(), e.GetDescription());
-    return false;
-  }
-  return true;
-}
 
 bool ArenaCameraNode::setScan3dHDRMode(const std::string& target_scan_3d_hdr_mode, std::string& reached_scan_3d_hdr_mode)
 {
@@ -1540,7 +1573,7 @@ bool ArenaCameraNode::setScan3dHDRMode(const std::string& target_scan_3d_hdr_mod
   }
   return true;
 }
-
+*/
 bool ArenaCameraNode::setScan3dModeSelectorValue(const std::string& target_scan_3d_mode_selector, std::string& reached_scan_3d_mode_selector)
 {
   try

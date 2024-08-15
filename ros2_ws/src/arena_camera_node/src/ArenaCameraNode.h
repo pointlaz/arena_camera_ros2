@@ -56,9 +56,9 @@ class ArenaCameraNode : public rclcpp::Node
 
   std::string serial_;
   bool is_passed_serial_;
-
+  std::string device_user_id_; //added
   std::string topic_;
-
+  std::string topic_point_cloud_; 
   size_t width_;
   bool is_passed_width;
 
@@ -155,7 +155,7 @@ class ArenaCameraNode : public rclcpp::Node
 
   void parse_parameters_();
   void initialize_();
-
+  void parameters_declarations();
   void wait_for_device_timer_callback_();
 
   void run_();
