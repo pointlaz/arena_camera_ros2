@@ -30,9 +30,13 @@ def generate_launch_description():
             name=[LaunchConfiguration('node_name'), '_0'],
             output='screen',
             respawn=LaunchConfiguration('respawn'),
-            parameters=[LaunchConfiguration('config_file'), {"device_user_id": LaunchConfiguration('device_user_id_0')}, 
-                                                             {'camera_frame', LaunchConfiguration('camera_frame_0')}],
-            prefix=LaunchConfiguration('launch_prefix'),
+            parameters=[LaunchConfiguration('config_file'),
+                        {
+                            "device_user_id": LaunchConfiguration('device_user_id_0'),
+                            "camera_frame": LaunchConfiguration('camera_frame_0'),
+                        }, 
+            ]
+            # prefix=LaunchConfiguration('launch_prefix'),
         ),
         Node(
             package='arena_camera_node',
@@ -40,9 +44,14 @@ def generate_launch_description():
             name=[LaunchConfiguration('node_name'), '_1'],
             output='screen',
             respawn=LaunchConfiguration('respawn'),
-            parameters=[LaunchConfiguration('config_file'), {"device_user_id": LaunchConfiguration('device_user_id_1')}, 
-                                                             {'camera_frame', LaunchConfiguration('camera_frame_1')}],
+            parameters=[
+                LaunchConfiguration('config_file'),
+                {
+                    "device_user_id": LaunchConfiguration('device_user_id_1'),
+                    "camera_frame": LaunchConfiguration('camera_frame_1'),
+                },
+            ]
 
-            prefix=LaunchConfiguration('launch_prefix'),
+            # prefix=LaunchConfiguration('launch_prefix'),
         ),
     ])

@@ -1,6 +1,6 @@
     # NOTE
     # USED BY the package .launch files
-arena_camera_node:
+/**:
   ros__parameters:
     #  The tf frame under which the images were published
     camera_frame: arena_camera

@@ -149,6 +149,8 @@ class ArenaCameraNode : public rclcpp::Node
   bool echo_elapsed_time_;
 
   double frame_rate_;
+
+  std::string camera_frame_;
   // End Added 
 
 

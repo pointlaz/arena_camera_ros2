@@ -295,6 +295,8 @@ void ArenaCameraNode::parameters_declarations(){
     frame_rate_ = this->declare_parameter("frame_rate", 10.0);
     RCLCPP_DEBUG_STREAM(this->get_logger(), "frame_rate will be: " << frame_rate_);
 
+    camera_frame_ =  this->declare_parameter("camera_frame", "arena_camera");
+
 
     // Get get_camera_parameter_info_
     get_camera_parameter_info_ = this->declare_parameter("get_camera_parameter_info", "none");
@@ -416,7 +418,7 @@ void ArenaCameraNode::publish_images_()
         sensor_msgs::msg::PointCloud2 point_cloud_msg;
         pcl::toROSMsg(point_cloud, point_cloud_msg); // Convert PCL PointCloud to ROS2 PointCloud2
         point_cloud_msg.header = p_image_msg->header;
-        
+        point_cloud_msg.header.frame_id = camera_frame_;
         point_cloud_pub_->publish(point_cloud_msg);
     }
 
@@ -450,7 +452,7 @@ void ArenaCameraNode::msg_form_image_(Arena::IImage* pImage,
         static_cast<uint32_t>(pImage->GetTimestampNs() / 1000000000);
     image_msg.header.stamp.nanosec =
         static_cast<uint32_t>(pImage->GetTimestampNs() % 1000000000);
-    image_msg.header.frame_id = std::to_string(pImage->GetFrameId());
+    image_msg.header.frame_id = camera_frame_; // std::to_string(pImage->GetFrameId()); // Modified
 
     //
     // 2 ) Height
